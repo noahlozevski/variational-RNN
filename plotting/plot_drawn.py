@@ -3,9 +3,10 @@ from numpy import genfromtxt
 import matplotlib.pyplot as plot
 
 data_path = '../datasets/Task2/'
-data_file = 'U25S25.TXT'
+data_file = 'U19S1.TXT'
 
 sig_data = genfromtxt(data_path + data_file, delimiter=' ', skip_header=1, dtype=int)
+print(len(sig_data))
 
 sig_matrix = np.zeros((10000, 10000), dtype=int)
 
