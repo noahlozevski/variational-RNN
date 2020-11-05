@@ -2,8 +2,8 @@ import numpy as np
 from numpy import genfromtxt
 import matplotlib.pyplot as plot
 
-data_path = '../datasets/Task2/'
-data_file = 'U5S25.TXT'
+data_path = '../datasets/Task1/'
+data_file = 'U40S1.TXT'
 
 sig_data = genfromtxt(data_path + data_file, delimiter=' ', skip_header=1, dtype=int)
 print(len(sig_data))
