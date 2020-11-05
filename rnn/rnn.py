@@ -15,12 +15,13 @@ include = [2, 4, 6, 8, 10, 12, 13, 15, 18, 20, 22, 24, 25, 28, 30, 32, 33, 34, 3
 features = 6
 random_start = False  # True = use random signature window of size min_rows, False = start signature window of size min_rows at time zero
 english_only = True  # Whether to only consider English or English and Chinese signatures
+normalize = True  # Whether to notmalize the data befroe it is fed to the networks
 
 
 # Load the data
 min_rows = 9999
 for file in sorted(os.listdir(DATA_PATH)):
-  if english_only and int(file.split('S')[0].replace('U', '')) in include:
+  if not english_only or int(file.split('S')[0].replace('U', '')) in include:
     f = open(DATA_PATH + file, 'r')
     rows = int(f.readline())
     if rows < min_rows:
@@ -31,7 +32,7 @@ for file in sorted(os.listdir(DATA_PATH)):
 genuine = []
 forgery = []
 for file in sorted(os.listdir(DATA_PATH)):
-  if english_only and int(file.split('S')[0].replace('U', '')) in include:
+  if not english_only or int(file.split('S')[0].replace('U', '')) in include:
     if random_start:
       data = np.genfromtxt(DATA_PATH + file, skip_header=1)
       data = np.delete(data, 2, axis=1)  # drop the timestamp column
@@ -96,13 +97,14 @@ for i in range(0, 2*len(genuine)):
 
 
 # Normalize the data
-x_all = np.zeros((len_train+len_valid, min_rows, features))
-for i in range(0, 2*len(genuine)):
-  if i % 2 == 0:
-    x_all[i] = genuine[i//2]
-  else:
-    x_all[i] = forgery[i//2]
-# print(x_all.shape)
+if normalize:
+    x_all = np.zeros((len_train+len_valid, min_rows, features))
+    for i in range(0, 2*len(genuine)):
+      if i % 2 == 0:
+        x_all[i] = genuine[i//2]
+      else:
+        x_all[i] = forgery[i//2]
+    # print(x_all.shape)
 
 for i in range(features):
   if i != 2:
