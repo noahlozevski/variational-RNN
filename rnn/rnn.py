@@ -1,5 +1,3 @@
-# Import Libraries
-import numpy as np
 import numpy as np
 import tensorflow as tf
 from keras.models import Sequential

@@ -130,3 +130,6 @@ dmypy.json
 
 # Pycharm-related files
 .idea
+
+# Don't push processed datasets
+datasets/processed*
