@@ -74,6 +74,23 @@ def split_sequences(x, y, names, window_length, window_stride):
 	return np.array(split_x), np.array(split_y), np.array(split_ids)
 
 
+def split_train_test(x, y, names, train_percentage=0.75):
+	"""Randomly splitting the data to train and test sets (by IDs) using the given percentage split."""
+	np.random.seed(0)  # Setting this for reproducible results
+	subjects = [i.split('S')[0] for i in names]
+	unique_subjects = list(set(subjects))
+	train_subjects = np.random.choice(unique_subjects, size=int(len(unique_subjects)*train_percentage), replace=False)
+	train_indices = [i for i, e in enumerate(subjects) if e in train_subjects]
+	test_indices = [i for i, e in enumerate(subjects) if e not in train_subjects]
+
+	x_train = x[train_indices]
+	y_train = y[train_indices]
+	x_test = x[test_indices]
+	y_test = y[test_indices]
+
+	return x_train, x_test, y_train, y_test
+
+
 if __name__ == "__main__":
 	INPUT_PATH = '../datasets/Task2/'
 	OUTPUT_PATH = '../datasets/processed'
@@ -83,7 +100,9 @@ if __name__ == "__main__":
 	stride = 20			# How far to move the window for creating fixed-length subsequences with each signature
 	length = 25			# How big each window is for the fixed-length sequences
 	merge_num = 3		# How many rows to concatenate into a single row -- see function for more details
+	train_test_split = 0.75		# This is how much of the data will be used for TRAINING, the rest is for testing (split by ID)
 
 	signatures, labels, ids = read_data(INPUT_PATH, english_only=eng_only, english_indices=eng_indices)
 	signatures_merged = merge_timesteps(x=signatures, timesteps_to_merge=merge_num)
-	x_subsequences, y_subsequences, ids_subsequences = split_sequences(x=signatures_merged, y=labels, names=ids, window_length=length, window_stride=stride)
+	signatures_subsequences, labels_subsequences, ids_subsequences = split_sequences(x=signatures_merged, y=labels, names=ids, window_length=length, window_stride=stride)
+	signatures_train, signatures_test, labels_train, labels_test = split_train_test(x=signatures_subsequences, y=labels_subsequences, names=ids_subsequences, train_percentage=0.75)
