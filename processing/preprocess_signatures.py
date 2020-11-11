@@ -30,6 +30,31 @@ def read_data(input_path, english_only, english_indices=None):
 	return sig_list, lab_list, id_list
 
 
+def normalize_data(data, skipcols=None):
+  """Normalizes the data so that all features are in the range [0,1]"""
+  rows = 0
+  for i in range(len(data)):
+    rows += data[i].shape[0]
+
+  rows2 = 0
+  data_all = np.empty((rows, data[0].shape[1]))
+  for i in range(len(data)):
+    data_all[rows2:rows2+data[i].shape[0], :] = data[i]
+    rows2 += data[i].shape[0]
+
+  data_norm = []
+  for i in range(len(data)):
+    data_norm_sig = np.zeros((data[i].shape[0], data[i].shape[1]))
+    for f in range(data[i].shape[1]):
+      if f in skipcols:
+        data_norm_sig[:, f] = data[i][:, f]
+      else:
+        data_norm_sig[:, f] = (data[i][:, f] - data_all[:, f].min()) / data_all[:, f].ptp()
+    data_norm.append(data_norm_sig)
+
+  return data_norm
+
+
 def merge_timesteps(x, timesteps_to_merge):
 	"""Combines multiple timesteps of raw signature data into a single timestep.
 	E.g., if timesteps_to_merge is 3, then each 3 rows will now be concatenated into 1,
@@ -101,8 +126,13 @@ if __name__ == "__main__":
 	length = 25			# How big each window is for the fixed-length sequences
 	merge_num = 3		# How many rows to concatenate into a single row -- see function for more details
 	train_test_split = 0.75		# This is how much of the data will be used for TRAINING, the rest is for testing (split by ID)
+	normalize = True 	# Whether you want to normalize the data or not
 
 	signatures, labels, ids = read_data(INPUT_PATH, english_only=eng_only, english_indices=eng_indices)
-	signatures_merged = merge_timesteps(x=signatures, timesteps_to_merge=merge_num)
+	if normalize:
+		signatures_normalized = normalize_data(signatures, skipcols=[2])
+		signatures_merged = merge_timesteps(x=signatures_normalized, timesteps_to_merge=merge_num)
+	else:
+		signatures_merged = merge_timesteps(x=signatures, timesteps_to_merge=merge_num)
 	signatures_subsequences, labels_subsequences, ids_subsequences = split_sequences(x=signatures_merged, y=labels, names=ids, window_length=length, window_stride=stride)
 	signatures_train, signatures_test, labels_train, labels_test = split_train_test(x=signatures_subsequences, y=labels_subsequences, names=ids_subsequences, train_percentage=0.75)
