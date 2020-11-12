@@ -159,6 +159,29 @@ print(len(x_it))
 print(x_it[0].shape)
 print(len(y_it))
 
+x_train = np.zeros((len(x_i), x_i[0].shape[0], x_i[0].shape[1]))
+for i in range(len(x_i)):
+  x_train[i] = x_i[i]
+
+x_valid = np.zeros((len(x_it), x_it[0].shape[0], x_it[0].shape[1]))
+for i in range(len(x_it)):
+  x_valid[i] = x_it[i]
+
+y_train = np.zeros((len(y_i)))
+for i in range(len(y_i)):
+  y_train[i] = y_i[i][0]
+
+y_valid = np.zeros((len(y_it)))
+for i in range(len(y_it)):
+  y_valid[i] = y_it[i][0]
+
+print(x_train)
+print(x_valid)
+print(y_valid)
+print(len(y_valid))
+print(y_train)
+print(len(y_train))
+
 
 # Simple RNN Model
 model_RNN = Sequential()
