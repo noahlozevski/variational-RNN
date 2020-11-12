@@ -69,7 +69,7 @@ def get_dataset(overlap=5, window_size=10, time_steps=20, language=None, max_len
 
 
 # Parameters for lodaing and processing the data
-DATASET_PATH = '/content/drive/My Drive/Colab Notebooks/Signatures_ECE765/datasets/Task2/'
+DATASET_PATH = '../datasets/Task2/'
 ENGLISH = [2, 4, 6, 8, 10, 12, 13, 15, 18, 20, 22, 24, 25, 28, 30, 32, 33, 34, 35, 40]
 
 window_size = 3
